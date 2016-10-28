@@ -2,9 +2,9 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "0.1.0",
-    "command": "cmd",
+    "command": "sh",
     "args": [
-        "/C"
+        "-c"
     ],
     "isShellCommand": true,
     "showOutput": "always",
@@ -12,10 +12,26 @@
         {
             "taskName": "Build PDF",
             "args": [
-                "cd source && lualatex --output-directory=../build diploma.tex && xcopy ..\\build\\diploma.pdf ..\\ /D /Y"
+                "cd source && lualatex --output-directory=../build diploma.tex && cp ../build/diploma.pdf ../"
             ],
             "isBuildCommand": true,
             "suppressTaskName": true
         }
-    ]
+    ],
+    "windows": {
+        "command": "cmd",
+        "args": [
+            "/C"
+        ],
+        "tasks": [
+            {
+                "taskName": "Build PDF",
+                "args": [
+                    "cd source && lualatex --output-directory=../build diploma.tex && xcopy ..\\build\\diploma.pdf ..\\ /D /Y"
+                ],
+                "isBuildCommand": true,
+                "suppressTaskName": true
+            }
+        ]
+    }
 }
