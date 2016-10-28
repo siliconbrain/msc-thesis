@@ -2,10 +2,15 @@
 %\documentclass[11pt,a4paper,twoside,openright]{report}  % Duplex
 
 %\PassOptionsToPackage{chapternumber=Huordinal}{magyar.ldf}
-\usepackage{t1enc}
-\usepackage[latin2]{inputenc}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}  % specify a font that supports required glyphs
+
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage[magyar]{babel}
+\usepackage{hyperref}
+\usepackage{datetime}
 \usepackage{enumerate}
 \usepackage[thmmarks]{ntheorem}
 \usepackage{graphics}
@@ -15,21 +20,19 @@
 %\usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{anysize}
-\usepackage[magyar]{babel}
 \usepackage{sectsty}
 \usepackage{setspace}  % Ettol a tablazatok, abrak, labjegyzetek maradnak 1-es sorkozzel!
 \usepackage[hang]{caption}
-\usepackage{hyperref}
+\usepackage{pdfpages}
 
 %--------------------------------------------------------------------------------------
 % Main variables
 %--------------------------------------------------------------------------------------
-\newcommand{\vikszerzo}{BÛdis-Szomor˙ Andr·s}
-\newcommand{\vikkonzulens}{dr.~Konzulens ElemÈr}
-\newcommand{\vikcim}{Elektronikus terelık}
-\newcommand{\viktanszek}{MÈrÈstechnika Ès Inform·ciÛs Rendszerek TanszÈk}
+\newcommand{\vikszerzo}{Dud√°s √Åd√°m}
+\newcommand{\vikkonzulens}{Dr.~Szeber√©nyi Imre}
+\newcommand{\vikcim}{Feladatle√≠r√≥ modul online oktat√°si rendszerhez}
+\newcommand{\viktanszek}{Ir√°ny√≠t√°stechnika √©s Informatika Tansz√©k}
 \newcommand{\vikdoktipus}{Diplomaterv}
-\newcommand{\vikdepartmentr}{BÛdis-Szomor˙ Andr·s}
 
 %--------------------------------------------------------------------------------------
 % Page layout setup
@@ -40,10 +43,10 @@
 % (like the ToC, the References, and the Chapter pages)remain in plane style
 
 \pagestyle{plain}
-%\setlength{\parindent}{0pt} % ·ttekinthetıbb, angol nyelv˚ dokumentumokban jellemzı
-%\setlength{\parskip}{8pt plus 3pt minus 3pt} % ·ttekinthetıbb, angol nyelv˚ dokumentumokban jellemzı
-\setlength{\parindent}{12pt} % magyar nyelv˚ dokumentumokban jellemzı
-\setlength{\parskip}{0pt}    % magyar nyelv˚ dokumentumokban jellemzı
+%\setlength{\parindent}{0pt} % √°ttekinthet≈ëbb, angol nyelv≈± dokumentumokban jellemz≈ë
+%\setlength{\parskip}{8pt plus 3pt minus 3pt} % √°ttekinthet≈ëbb, angol nyelv≈± dokumentumokban jellemz≈ë
+\setlength{\parindent}{12pt} % magyar nyelv≈± dokumentumokban jellemz≈ë
+\setlength{\parskip}{0pt}    % magyar nyelv≈± dokumentumokban jellemz≈ë
 
 \marginsize{35mm}{25mm}{15mm}{15mm} % anysize package
 \setcounter{secnumdepth}{0}
@@ -57,7 +60,7 @@
 %--------------------------------------------------------------------------------------
 \hypersetup{
     bookmarks=true,            % show bookmarks bar?
-    unicode=false,             % non-Latin characters in Acrobatís bookmarks
+    unicode=false,             % non-Latin characters in Acrobat‚Äôs bookmarks
     pdftitle={\vikcim},        % title
     pdfauthor={\vikszerzo},    % author
     pdfsubject={\vikdoktipus}, % subject of the document
@@ -110,17 +113,12 @@
 \author{\vikszerzo}
 \title{\viktitle}
 \includeonly{
-	guideline,%
-	project,%
-	titlepage,%
-	declaration,%
-	abstract,%
-	introduction,%
-	chapter1,%
-	chapter2,%
-	chapter3,%
-	acknowledgement,%
-	appendices,%
+	titlepage,
+	acknowledgement,
+	declaration,
+	abstract,
+	introduction,
+	summary,
 }
 %--------------------------------------------------------------------------------------
 %	Setup captions
@@ -139,30 +137,23 @@ aboveskip=10pt}
 % Table of contents and the main text
 %--------------------------------------------------------------------------------------
 \begin{document}
-\singlespacing
-\include{guideline}
-\include{project}
-
 \pagenumbering{arabic}
 \onehalfspacing
+
 \include{titlepage}
+\include{acknowledgement}
 \tableofcontents\vfill
 \include{declaration}
+\includepdf[pages={1}]{feladatkiiras.pdf}
 \include{abstract}
 \include{introduction}
-\include{chapter1}
-\include{chapter2}
-\include{chapter3}
-\include{acknowledgement}
+\include{summary}
+\listoffigures\addcontentsline{toc}{chapter}{√Åbr√°k jegyz√©ke}
+\listoftables\addcontentsline{toc}{chapter}{T√°bl√°zatok jegyz√©ke}
+%\printglossary[title=R√∂vid√≠t√©sek jegyz√©ke]
 
-%\listoffigures\addcontentsline{toc}{chapter}{¡br·k jegyzÈke}
-%\listoftables\addcontentsline{toc}{chapter}{T·bl·zatok jegyzÈke}
-
-\bibliography{mybib}
-\addcontentsline{toc}{chapter}{IrodalomjegyzÈk}
-\bibliographystyle{plain}
-
-\include{appendices}
+\bibliography{bibliography}\addcontentsline{toc}{chapter}{Irodalomjegyz√©k}
+\bibliographystyle{huplain}
 
 \label{page:last}
 \end{document}
