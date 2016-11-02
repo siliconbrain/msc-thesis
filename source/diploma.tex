@@ -113,12 +113,15 @@
 \author{\vikszerzo}
 \title{\viktitle}
 \includeonly{
-	titlepage,
-	acknowledgement,
-	declaration,
 	abstract,
+	acknowledgement,
+	bibliography,
+	declaration,
+	implementation,
 	introduction,
+	planning,
 	summary,
+	titlepage,
 }
 %--------------------------------------------------------------------------------------
 %	Setup captions
@@ -140,14 +143,16 @@ aboveskip=10pt}
 \pagenumbering{arabic}
 \onehalfspacing
 
-\include{titlepage}
-\include{acknowledgement}
-\tableofcontents\vfill
-\include{declaration}
 \includepdf[pages={1}]{feladatkiiras.pdf}
+\include{titlepage}
+\include{declaration}
+\tableofcontents\vfill
 \include{abstract}
 \include{introduction}
+\include{planning}
+\include{implementation}
 \include{summary}
+\include{acknowledgement}
 \listoffigures\addcontentsline{toc}{chapter}{Ábrák jegyzéke}
 \listoftables\addcontentsline{toc}{chapter}{Táblázatok jegyzéke}
 %\printglossary[title=Rövidítések jegyzéke]
