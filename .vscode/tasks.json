@@ -5,14 +5,14 @@
     "command": "sh",
     "isShellCommand": true,
     "showOutput": "always",
+    "suppressTaskName": true,
     "tasks": [
         {
             "taskName": "Build PDF",
             "args": [
                 "build.sh"
             ],
-            "isBuildCommand": true,
-            "suppressTaskName": true
+            "isBuildCommand": true
         }
     ],
     "windows": {
@@ -28,8 +28,7 @@
                 "args": [
                     "build.ps1"
                 ],
-                "isBuildCommand": true,
-                "suppressTaskName": true
+                "isBuildCommand": true
             }
         ]
     }
