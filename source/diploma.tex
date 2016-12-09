@@ -99,11 +99,18 @@
 \newcommand{\code}[1]{{\upshape\ttfamily\scriptsize\indent #1}}
 
 % define references
-\newcommand{\figref}[1]{\ref{fig:#1}.}
+\newcommand{\figref}[1]{\ref{figure:#1}. ábra}
 \renewcommand{\eqref}[1]{(\ref{eq:#1})}
 \newcommand{\listref}[1]{\ref{listing:#1}.}
 \newcommand{\sectref}[1]{\ref{sect:#1}}
 \newcommand{\tabref}[1]{\ref{tab:#1}.}
+
+\newcommand{\sectsep}{
+	\par \nopagebreak
+	\parbox{\linewidth}{
+    	\centering\bigskip$\ast\quad\ast\quad\ast$\par\bigskip
+	}
+}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 %\DeclareMathOperator*[1]{\floor}{arg\,max}
