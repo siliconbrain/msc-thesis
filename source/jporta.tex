@@ -56,9 +56,9 @@ Az én feladatom a feladatok leírását és kiadását, és az azokra érkező 
 
 Az Őry Máté által újratervezett portál sok tekintetben szakított a Cportában felhasznált technológiákkal.
 Az új rendszer implementálásához a Python programnyelv 2-es változatát válaszotta, melyet a későbbiekben a 3-as változatra frissítettünk, ezzel biztosítva a szoftver alapját képző komponens tartós támogatottságát, amit már \cite{Kalman14} is említ.
-% TODO Django 1.8.9
-
-% TODO flexibilisebb, általánosabb felépítés, több nyelv támogatása, akár nem programozási feladatok támogatása is
+A portál második alapja a Django webes keretrendszer\footnote{A dolgozat írásának pillanatában a portál a Django 1.8.9-es verzióját használja.}, mely a webes felület generálásáért és a belső adatmodellen végzett műveletek adatbázisműveletekre fordításáért és végrehajtásáért felel. 
+A teljes projekt megannyi más technológiát is felhasznál, amelyek nem kapcsolódnak szorosan ezen dolgozat témájához.
+A feladat szempontjából fontos, az implementációban alkalmazott technológiákat a \ref{chapter:exercise}. fejezet külön tárgyalja.
 
 \section{A portál használata}
 Ahogy azt az előzőekben láthattuk, a portál sok szolgáltatást nyújt felhasználói számára. 
@@ -77,6 +77,8 @@ Már a kezdőoldalon látható (\figref{jporta-home-h}, \figref{jporta-home-o}),
 Mivel ezek az eltérések egy adott felhasználói szerepkörre (hallgató, oktató, adminisztrátor) jellemzőek, ezért ezeket a nézöpontokat és a hozzájuk kapcsolódó funkciókat az alábbiakban külön részletezem.
 
 \subsection{A portál használata hallgatói szemszögből}
+A portálra belépő hallgatókat korábbi és aktuális feladataik listája fogadja.
+% TODO
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{figures/Jporta-home-h}
