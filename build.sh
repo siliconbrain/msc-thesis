@@ -1,4 +1,4 @@
-rsync -auv source build
+rsync -auv source/ build/
 pushd build
 lualatex diploma
 bibtex diploma
