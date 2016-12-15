@@ -55,7 +55,7 @@ Ekkor a portál fejlesztését az IK Cloud csapatának tagjai -- köztük jómag
 Az én feladatom a feladatok leírását és kiadását, és az azokra érkező megoldások beadását és értékelését lehetővé tevő modul továbbfejlesztett modelljének kidolgozása lett, míg a felhasználói felület és az egyéb adminisztrációs funkciók tervezését és implementációját Kálmán Viktor végezte (lásd \cite{Kalman14}).
 
 Az Őry Máté által újratervezett portál sok tekintetben szakított a Cportában felhasznált technológiákkal.
-Az új rendszer implementálásához a Python programnyelv 2-es változatát válaszotta, melyet a későbbiekben a 3-as változatra frissítettünk, ezzel biztosítva a szoftver alapját képző komponens tartós támogatottságát, amit már \cite{Kalman14} is említ.
+Az új rendszer implementálásához a Python programnyelv 2-es változatát válaszotta, melyet a későbbiekben a 3-as változatra frissítettünk, ezzel biztosítva a szoftver alapját képző komponens tartós támogatottságát. \cite{PEP373} \cite{Kalman14}
 A portál második alapja a Django webes keretrendszer\footnote{A dolgozat írásának pillanatában a portál a Django 1.8.9-es verzióját használja.}, mely a webes felület generálásáért és a belső adatmodellen végzett műveletek adatbázisműveletekre fordításáért és végrehajtásáért felel. 
 A teljes projekt megannyi más technológiát is felhasznál, amelyek nem kapcsolódnak szorosan ezen dolgozat témájához.
 A feladat szempontjából fontos, az implementációban alkalmazott technológiákat a \ref{chapter:exercise}. fejezet külön tárgyalja.
@@ -65,7 +65,7 @@ Ahogy azt az előzőekben láthattuk, a portál sok szolgáltatást nyújt felha
 Ezeket a felhasználókat 4 csoportra oszthatjuk: vendégek (nem azonosított felhasználók), hallgatók, oktatók, illetve az adminisztrátorok.
 Mivel a tanszéken sok doktorandusz és demonstrátor is végez oktatási tevékenységet, egy felhasználó szerepelhet bizonyos tárgyaknál oktatóként, míg másoknál hallgatóként.
 A portál vendégek számára -- jelenleg -- nem tartalmaz hozzáférhető tartalmat, így a még be nem jelentkezett felhasználókat a belépőoldal fogadja.
-A belépőoldalon a felhasználók azonosítására két lehetőség van: eduID (egyetemi SSO) vagy a hagyományos felhasználónév--jelszó páros (lásd \figref{jporta-login}).
+A belépőoldalon a felhasználók azonosítására két lehetőség van: eduID (egyetemi \underline{s}ingle \underline{s}ign-\underline{o}n) vagy a hagyományos felhasználónév--jelszó páros (lásd \figref{jporta-login}).
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{figures/Jporta-login}
@@ -77,14 +77,16 @@ Már a kezdőoldalon látható (\figref{jporta-home-h}, \figref{jporta-home-o}),
 Mivel ezek az eltérések egy adott felhasználói szerepkörre (hallgató, oktató, adminisztrátor) jellemzőek, ezért ezeket a nézöpontokat és a hozzájuk kapcsolódó funkciókat az alábbiakban külön részletezem.
 
 \subsection{A portál használata hallgatói szemszögből}
-A portálra belépő hallgatókat korábbi és aktuális feladataik listája fogadja.
-% TODO
+A portálra belépő hallgatókat korábbi és aktuális feladataik listája fogadja (\figref{jporta-home-h}).
+Az egyes feladatok mellett található linkekre kattintva eljutnak a feladatok oldalára, ahol megtekinthetik a feladatra beadott előző megoldásaikat, illetve újabb megoldást adhatnak be.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{figures/Jporta-home-h}
     \caption{Jporta kezdőlap (hallgató)}
     \label{figure:jporta-home-h}
 \end{figure}
+
+A fejlécben található \textbf{Eredmények} gombra kattintva eljuthatnak egy másik oldalra (\figref{jporta-results}), ahol az értékeléseikről -- a feladatoktól eltérő, pl. zárthelyi dolgozat eredménye -- és a katalógusos órákon való jelenlétükről kapnak információt.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{figures/Jporta-results}
@@ -92,7 +94,11 @@ A portálra belépő hallgatókat korábbi és aktuális feladataik listája fog
     \label{figure:jporta-results}
 \end{figure}
 
+A portál használata ennyiben lényegében ki is merül a hallgatók számára, eltekintve néhány további közös funkciótól, melyeket a szakasz végén részletezek.
+
 \subsection{A portál használata oktatói szemszögből}
+A portálra belépő oktatókat a figyelmüket igénylő beadások listája fogadja, melyeknél oktatói beavatkozás szükséges.
+A beadás linkjére kattintva eljutnak annak részletező oldalára, ahol elbírálhatják a megoldás helyességét.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{figures/Jporta-home-o}
@@ -100,6 +106,19 @@ A portálra belépő hallgatókat korábbi és aktuális feladataik listája fog
     \label{figure:jporta-home-o}
 \end{figure}
 
+A fejlécben található \textbf{Kurzusok} gombra kattintva eljuthatnak az általuk oktatott kurzusokat prezentáló oldalra.
+Itt egy konkrét kurzust kiválasztva annak részletező oldalára kerülnek.
+Ezen az oldalon különböző füleken megtekinthetőek és módosíthatóak:
+\begin{itemize}
+    \item a kurzus adminisztrátorai,
+    \item a kurzus tagjai (oktatók és hallgatók is),
+    \item a kurzusnak kiadott feladatok,
+    \item a kurzus eseményei,
+    \item a kurzus értékelései,
+    \item és a kurzusnak küldött üzenetek.
+\end{itemize}
+
+Ezeken felül az oktatók számára is rendelkezésre állnak a szakasz végén részletezett közös funkciók.
 
 \subsection{Adminisztrátori felületek}
 Az adminisztrátori jogkörrel rendelkező felhasználók számára elérhető az \textit{Irányítópult} (Management dashboard), ami a \ref{figure:jporta-management-dashboard}. ábrán látható.
@@ -133,3 +152,6 @@ Ehhez hasonlóan a kurzuscsoportok oktatói is tudnak üzenetet küldeni saját 
     \caption{Kurzus szintű üzenetküldés}
     \label{figure:jporta-course-messages}
 \end{figure}
+
+% Profil
+Végül, minden felhasználó rendelkezik egy profilllal, ahol a fontosabb információ találhatóak meg (név, e-mail cím, profilkép, utolsó bejelentkezés ideje), és egy személyes beállítások oldallal, ahol kiválaszthatja az általa használni kívánt nyelvet és módosíthatja profilképét.

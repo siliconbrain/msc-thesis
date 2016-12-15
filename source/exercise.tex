@@ -2,31 +2,306 @@
 \chapter{Automatizált feladatkiértékelő modul}\label{chapter:exercise}
 %----------------------------------------------------------------------------
 
-% TODO cél: flexibilisebb, általánosabb felépítés, több nyelv támogatása, akár nem programozási feladatok támogatása is
+A Jporta legfőbb alkotóeleme a feladatok leírásáért és a kiadott feladatokra érkezett megoldások automatizált kiértékeléséért felelős modul.
+A portálnak ebben az újabb változatában fontos cél, hogy ez az alrendszer flexibilisebb legyen, mint az eddigi megoldások.
+Ezt a flexibilitást egy általánosabb, de mégis egységes felépítés alkalmazásával igyekeztem elérni.
+Az általam megtervezett rendszer a programnyelvek használatához kapcsolódó eszközök (pl. fordítók, interpreterek, tesztelési környezetek) alacsonyszintű működését egy közös, magasabb szintű absztrakció mögé rejti, melynek hatására a rendszer bővíthetősége megnő, és akár nem programozási jellegű feladatok készítésére is alkalmassá válik.
+
+Ebben a felezetben végigvezetem az olvasót a modul megtervezésének folyamatán, a követelmények összegyűjtésétől, a megtervezett rendszer működésének és használatának leírásán át, egészen az implementációhoz szükséges technológiák bemutatásáig.
 
 \section{Követelmények}
-% Igényfelmérés menete (a feladatkiértékelő modulról)
-% Igények, elvárások, követelmények
+A tervezés első lépése a tervezendő modullal szemben támasztott követelmények felmérése, amit a már meglévő munka elemzésével kezdtem.
+A modul követelményeinek túlnyomú részét \cite{Ory13} már azonosította, miközben a portál egészére nézve végezte el ezt a feladatot.
+\cite{Kalman14} tovább pontosította a követelményeket, miközben a portál más aspektusainak fejlesztésén dolgozott.
+Az általuk feltárt követelmények a következők:
+\begin{enumerate}
+    \item A hallgató listázhatja és megtekintheti a számára kiosztott feladatokat.
+    \item A hallgató a feladatokhoz megoldást adhat be.
+    \item A hallgató megtekintheti korábban beadott megoldásait és azok eredményeit.
+    \item Az oktató új feladatot hozhat létre.
+    \item \label{item:specification} A feladatok tartalmaznak feladatkiírást, amely lehet statikus vagy dinamikusan generált.
+    \item A feladatoknak része lehet egy vagy több fájl, amelyeket az oktató ad meg.
+    \item A feladatoknak része lehet egy vagy több fájl, melyet a hallgatónak kell beadnia.
+    \item A feladatok tartalmaznak automatikusan végrehajtható ellenőrzéseket.
+    \item Az oktató feladatot adhat ki hallgatónak.
+    \item Az oktató a feladatra beadott megoldásokat listázhatja, megtekintheti azok tartalmát, eredményét.
+    \item A rendszer bővíthető új nyelvek, környezetek, eszközök támogatásával.
+    \item Egy feladatkörben több alternatív eszköz (pl. GCC és Clang C fordítók) támogatása, akár egy feladaton belül is.
+    \item \label{item:isolation} A megoldások kiértékelése izolált környezetben történik.
+    \item A kiértékelés elosztott rendszerben, tetszőleges számú gépen működik.
+\end{enumerate}
+Ezek a követelmények részben megegyeznek a Cporta eredeti követelményeivel, illetve tartalmaznak a Cporta használata közben megfogalmazott igényeket is.
+A Jporta első, demó változatának próbája során azonban további igények fogalmazódtak meg a felhasználókban, melyek a feladatkiértékelő modult is érintették.
+Ezek alapján én az alábbi kiegészítéseket teszem a követelmények már meglévő listájához:
+\begin{enumerate}[resume]
+    \item \label{item:manual} A feladatok tartalmazhatnak emberi beavatkozást igénylő ellenőrzéseket.
+    \item \label{item:traceability} A kiértékelés folyamata legyen nyomonkövethető.
+\end{enumerate}
+
+A követelmények nagy része nem igényel magyarázatot, ám van néhány, amelyekről szeretnék még pár szót szólni.
+
+Az \ref{item:specification}. követelmény a feladatkiírás szövegének dinamikus generálhatóságát írja elő.
+Ez azt jelenti, hogy a feladatkiírás hallgatónként eltérő lehet, amely eltérés a hallgató személyétől, pontosabban a személyéhez kapcsolódó, rendelkezésre álló információktól függ.
+Ilyen adat lehet például a hallgató neve, Neptun kódja, e-mail címe, felhasználóneve, stb.
+Ezenkívül, a generáláshoz felhasználható bármilyen, a generálás pillanatában rendelkezésre álló erőforrás, pl. az oktató által megadott fájl, kerülendő azonban a nem megismételhető műveletekkel szerezhető adatok felhasználása (pl. aktuális idő lekérdezése, az operációs rendszer véletlenszám generátorának használata).
+
+A \ref{item:isolation}. követelmény előírja, hogy a feladatok kiértékelése izolált környezetben történjen.
+Ez nagyon fontos kitétel a rendszer biztonsága és stabilitása szempontjából.
+Az izoláció egyrészt védi a gazda rendszert, amelyben a kiértékelések végbemennek, másrészt az egyidejűleg futó kiértékeléseket is védi egymástól.
+
+A \ref{item:manual}. követelményre azért van szükség, mert a informatika jelenlegi eszközeivel nem minden ellenőrzés valósítható meg, néha elkerülhetetlen az emberi beavatkozás szükségessége.
+A rendszer előző változataiban azonban nem volt ilyen jellegű funkció, a kiértékelés minden lépése automatizáltan történt.
+Ez az új igény azonban jelentős változással jár a kiértékelés menetében, ugyanis egy potenciálisan végtelen, de mindenképp az eddigiekhez képest hosszú várakozást -- max. pár 100 milliszekundum kontra percek, órák, napok -- iktat be a folyamatba.
+Ahhoz, hogy ezalatt a várakozás alatt a kiértékelést végző rendszer erőforrásai ne legyenek feleslegesen lefoglalva, a kiértékelés végrehajtása nem történhet egyetlen folytonos menetben, szükség van a folyamat állapotának elmentésére, majd visszatöltésére és a kiértékelés folytatására az emberi beavatkozás elvégzése után.
+
+A \ref{item:traceability}. követelményre a rendszer auditálhatósága miatt van szükség, de a feladatokban, esetleg a feladatot kiértékelő rendszerben előforduló hibák feltárását és kezelését is megkönnyíti.
+A követelmény teljesítéséhez rendelkezésünkre kell állnia a kiértékelés mindenkori állapotának, illetve a kiértékelés során keletkezett részeredményeknek.
 
 \section{A feladatkiértékelő modul működése}
-% Feladatkiértékelés nagyvonalakban (architektúrális nézet, named pipes & filters)
+Az újratervezett feladatkiértékelő modul felépítését a \textit{csővezetékek és szűrők} (\textit{pipes and filters}, \cite{PipesAndFilters}) architektúrális tervezési mintára alapoztam.
+A \textit{szűrők} a feladatok kiértékelési lépéseit (pl. fordítás, futtatás, tesztelés) reprezentálják, míg a \textit{csővezetékek} a lépések közötti adatáramlást.
+A \ref{figure:example-pipeline}. ábrán a leggyakrabban előforduló feladat felépítés sematikus képe látható, melyen a különféle ``dobozok'' testesítik meg a szűrőket, a köztük vezető nyilak pedig a csővezetékeket, melyek egyúttal az adatáramlás irányát is szemléltetik.
+Ahogy az ábrán is jól látható, a szűrőket három csoportra oszthatjuk: \textit{források}, \textit{átalakítók} és \textit{nyelők}.
+Az ábrán látható paralelogrammák a források, a téglalapok az átalakítók, a hengerek pedig a nyelők.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/example-pipeline}
+    \caption{A legjellemzőbb feladatstruktúra}
+    \label{figure:example-pipeline}
+\end{figure}
+
+Az így felépített struktúra mindig egy irányított gráfot határoz meg, melynek csúcsai a szűrők, élei pedig a csővezetékek, az élek iránya pedig a szűrők közti adatáramlás iránya.
+Ha ennek a gráfnak az éleit megfordítjuk, egy \textit{függőségi gráfot} kapunk, melynek segítségével meghatározhatjuk a kiértékelés lépéseinek sorrendjét.
+Ahhoz, hogy a feladat kiértékelhető legyen, \textbf{a függőségi gráfnak körmentesnek kell lennie}. \cite{wiki:DependencyGraph}
+
+A kiértékelés kezdetben mindig a függőségi gráf egy 0 bemeneti fokszámú csúcsából -- az eredeti gráfban nyelő -- indul.
+A következő lépés, hogy meghatározzuk azon csúcsok halmazát, amelyektől a kiértékelendő csúcsunk közvetlenül függ.
+Mielőtt ezt a csúcsot kiértékelhetnénk, az összes ebben a halmazban lévő csúcsnak ki kell lennie értékelve, ezért ezt az algoritmust a halmaz elemeire is rekurzívan alkalmazzuk.
+Ha olyan csúcsot találunk, amelynek nincs függősége -- azaz, 0 a kimeneti fokszáma; az eredeti gráfban forrás --, akkor azt a csúcsot azonnal kiértékelhetjük.
+Mivel a gráfról kikötöttük, hogy körmentesnek kell lennie, csúcsainak száma pedig véges, az algoritmusunk véges számú lépésben kiértékeli a feltárt részgráfot.
+Ez az algoritmus soros végrehajtás esetén ideális.
+A kiértékelés hatékonysága növelhető, ha a már kiértékelt csúcsok eredményeit egy gyorsítótárban eltároljuk, így ha több csúcs is függ ugyanattól az eredménytől, a kiértékelést akkor is csak egyszer végezzük el (lásd \cite{wiki:Memoization}).
+
+Egy másik lehetséges algoritmus, ha a függőségi gráfot a lehető legkevesebb szintre osztjuk úgy, hogy az egy szinten lévő csúcsok között ne legyen függőség.
+Az azonos szinten lévő csúcsok egymástól függetlenül kiértékelhetőek, amit kihasználhatunk, ha lehetőségünk van párhuzamos végrehajtásra.
+
+A ``pipe'' és ``filter'' szavakat az informatikában sok esetben használják, gyakran hasonló, de eltérő jelentésekkel.
+Ezzel összevágóan a Python nyelvben a ``filter'' szó egy beépített függvényre hivatkozik, és a ``pipe'' szó is sok beépített függvénykönyvtárban előforul.
+A félreértések elkerülése végett a továbbiakban a szűrőket \textit{blokkoknak} (\textit{block}), a csővezetékeket pedig \textit{azonosítóknak} (\textit{handle}) fogom nevezni.
+Ez azért is előnyös, mert a szóhasználat jobban utal a minta konkrét megvalósítására, amely jobban hasonlít a matematikai feladványokból ismert ``műveleti gépekhez''.
 
 \section{Feladatok leírása}
-% Feladatleíró struktúra
+Az előzőekben leírtak alapján, szinte adja magát a feladatok leírására szolgáló modell, melynek két központi eleme a \texttt{Block} és a \texttt{Handle} osztályok.
+A \texttt{Block} absztakt ősosztályként szolgál a különböző funkciókat (pl. fájlfeltöltés, fordítás, futtatás, ellenőrzés) megvalósító blokk osztályok számára.
+Az ezekből példányosított blokkok pontosan egy feladatnak részei, melyet az \texttt{Exercise} osztály modellez.
+A blokkokat a \texttt{Handle} osztály példányai kötik össze, melyek egy feladaton belül egyedi névvel rendelkeznek.
+Ez az összeköttetés azonban nem közvetlen, hanem a \texttt{Provider} és a \texttt{Consumer} osztályok példányain keresztül történik.
+Minden \texttt{Handle} példány pontosan egy \texttt{Provider} példányhoz tartozik, amelyek szintén pontosan egy blokkhoz tartoznak.
+Ez a kapcsolat jelzi, hogy melyik blokk kiértékelése állítja elő az azonosító által megnevezett erőforrást, vagyis ezek a blokk kimenetei.
+A \texttt{Consumer} osztály példányai ennek a kapcsolatnak a párját testesítik meg, vagyis hogy az erőforrást mely blokkok használják fel kiértékelésükkor, mik a blokk bemenetei.
+Minden \texttt{Consumer} példány pontosan egy blokkhoz kapcsolódik, ám egy \texttt{Handle} példányhoz több \texttt{Consumer} is kapcsolódhat, hiszen ugyanazt az erőforrást több blokk is felhasználhatja.
+Minden blokkra igaz, hogy nulla vagy több \texttt{Provider} és \texttt{Consumer} példányhoz kapcsolódik.
+Az előző részekben említett \textit{források} azok a blokkok lesznek, amelyek nem kapcsolódnak \texttt{Consumer} példányhoz.
+Hasonlóképp, a \texttt{Provider}-ektől mentes blokkok lesznek a \textit{nyelők}.
+Az itt leírt modellosztályokat szemléltető UML osztálydiagram a \ref{figure:exercise-uml-cd}. ábrán látható.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figures/exercise-uml-cd}
+    \smallskip
+    \caption{Feladatleíró modul UML osztálydiagrammja}
+    \label{figure:exercise-uml-cd}
+\end{figure}
+
+Mivel a \texttt{Block} osztály csak ősként szolgál a különböző blokktípusok számára, minden egyedi funkciót az ebből származtatott osztályokban kell megvalósítani.
+A blokkok be- és kimeneteit a \texttt{Block\-Property} osztály példányai jelölik a Django modellek \texttt{Field}-jeihez hasonló, deklaratív megoldással.
+Amikor a Python értelmező betölti a \texttt{Block} osztály egy leszármazottját, a típus létrehozásának folyamatába beavatkozik a \texttt{Block\-Metaclass} osztály, ami a Python \texttt{\_\_new\_\_} speciális metódusát definiálja felül, és a \texttt{Block} osztály meta\-class-aként van megjelölve. \cite{PythonMetaclass}
+Ez a metódus a típus definiciójában található összes \texttt{Block\-Property} típusú attribútumot lecseréli egy \texttt{Block\-Property\-Descriptor} típusú attribútumra, aminek átadja az attribútum nevét és paramétereit, illetve a típus egy speciális attribútumába feljegyzi a tulajdonság nevét.
+Ez utóbbi lista alapján tudja azonosítani a blokk osztály, hogy mely attribútumai be- és kimenetek.
+A \texttt{Block\-Property\-Descriptor} példányok a Python nyelv \textit{leíró} (\textit{descriptor}) mintáját valósítják meg.
+Ez az osztály ugyan felüldefiniálja a mintában található mindhárom speciális metódust (\texttt{\_\_get\_\_}, \texttt{\_\_set\_\_} és \texttt{\_\_delete\_\_}), azonban csak a \texttt{\_\_get\_\_} metódust valósítja meg.
+Ez a következő speciális működést vonja magaután: amikor egy blokk osztály példányának be- vagy kimenetet reprezentáló attribútumát elérjük (értsd: \texttt{blokk\_peldany.attributum}), akkor ez a felüldefiniált \texttt{\_\_get\_\_} metódus hívódik meg úgy, hogy a leírót, a blokk példányt és a blokk típust (osztályt) kapja meg paraméterül. \cite{PythonDescriptors}
+Ez a metódus a \texttt{Block\-Property\-Instance} osztály egy példányával tér vissza.
+Ez az objektum az eredeti \texttt{Block\-Property} paraméterein és a hozzá vezető attribútum nevén kívül magára a tartalmazó blokk példányra is tartalmaz egy referenciát, amelyen keresztül manipulálni tudja azt.
+
+A blokkok egyedi kiértékelési algoritmusát a leszármazott osztály \texttt{evaluate} metódusa valósítja meg.
+Ez a metódus paraméterként megkapja a blokk referenciáját és a blokk kiértékelésének kontextusát (lásd \ref{section:submission-evaluation}. szakasz), és ezeket felhasználva elvégzi a kimeneti értékei kiszámításához szükséges számításokat, majd a kontextusban beállítja a kimeneteinek megfelelő értékeket.
 
 \section{Feladatok készítése}
 % Feladatkészítés ebben a rendszerben (jelenlegi vs. vizuális nyelv)
+TODO
 
 \section{Feladatok kiadása}
 % Feladatkiadás
+% Publikálás: feladat ellenőrzése (dag), véglegesítés (módosítások hatása)
+% Assignment osztály
+TODO
 
 \section{Feladatbeadás}
 % Feladatbeadás
+% Specification blokk kiértékelése az egyedi feladatokhoz
+% Submission osztály
+TODO
 
-\section{Megoldások ellenőrzése és értékelése}
+\section{Megoldások ellenőrzése és értékelése}\label{section:submission-evaluation}
 % Feladatkiértékelés konkrétan (Celery, AMQP/RabbitMQ, xattr (portal fs vs. backup fs támogatás), redis)
-
-% Beágyazás a Jportába (Django, felület) (ez inkább Viktoré?)
-% Dokumentáció (a jelen dolgozat mellett...)
+% A kiértékelés a SubmissionResult blokktól indul
+% EvaluationContext
+TODO
 
 % Fejlesztés menete: git, Vim, CIRCLE devenv
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figures/jporta-exercise}
+    \caption{Feladattervező nézet a Jportán}
+    \label{figure:jporta-exercise}
+\end{figure}
+
+\section{Összegzés}
+TODO
+% To-Do:
+% * beágyazás a Jportába (feladatok, blokkok megjelenítése)
+% * részletes dokumentáció (a jelen dolgozat mellett...)
+
+\subsection{Elkészült blokkok}
+Ebben a szakaszban sorraveszem és röviden bemutatom a dolgozat befejezéséig elkészült blokktípusokat.
+
+\subsubsection{AuthorFile}
+\textbf{Leírás:} a feladat szerzője által feltöltött fájlt tartalmazó blokk \\
+\textbf{Tulajdonságok:} -- \\
+\textbf{Bemenetek:} -- \\
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item output: a szerző által feltöltött fájl tartalma
+\end{itemize}
+        
+\subsubsection{Checker}
+\textbf{Leírás:} a megoldáson futtatott tesztek eredményét egyszerű sablon-behelyettesítéssel vizsgáló blokk \\
+\textbf{Tulajdonságok:}
+\begin{itemize}
+    \item expected: az elvárt eredmény sablonja, melybe a \texttt{params} bemenet értékeit behelyettesítve kapjuk meg az elvárt eredményt
+\end{itemize}
+\textbf{Bemenetek:}
+\begin{itemize}
+    \item actual: a teszt lefutása során kapott eredmény
+    \item params: az elvárt eredmény sablonjába behelyettesítendő értékek
+\end{itemize}
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item result: az ellenőrzés eredménye
+\end{itemize}
+
+\subsubsection{DefaultValue}
+\textbf{Leírás:} a végrehajtási kontextusban alapból elérhető értékeket szolgáltató blokk \\
+\textbf{Tulajdonságok:} -- \\
+\textbf{Bemenetek:} -- \\
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item email: az éppen kiértékelt megoldás szerzőjének e-mail címe
+    \item username: az éppen kiértékelt megoldás szerzőjének felhasználóneve
+\end{itemize}
+
+\subsubsection{GccCompiler}
+\textbf{Leírás:} egy forrásfájl fordítást végző blokk, ami a GCC fordítót használja \\
+\textbf{Tulajdonságok:}
+\begin{itemize}
+    \item extra\_arguments: tetszőleges egyéb parancssori argumentumokat tartalmazó sztring a fordító számára
+\end{itemize}
+\textbf{Bemenetek:}
+\begin{itemize}
+    \item files\_in: egyéb bemeneti fájlok, melyeket a fordítási folyamat felhasználhat
+    \item libraries: függvénykönytárak
+    \item sources: fordítandó forrásfájlok
+    \item stdin: szabványos bemenet
+\end{itemize}
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item files\_out: egyéb kimeneti fájlok, melyek a fordítás során keletkeztek vagy módosultak
+    \item runnable: a fordítás során keletkezett futtatható állomány
+    \item stderr: szabványos hibakimenet
+    \item stdout: szabványos kimenet
+\end{itemize}
+
+\subsubsection{LecturerApproval}
+\textbf{Leírás:} valamilyen eredmény oktató által történő kézi értékelését jelző blokk \\
+\textbf{Tulajdonságok:} -- \\
+\textbf{Bemenetek:}
+\begin{itemize}
+    \item dependencies: azok az értékek, amelyekre a kézi értékeléshez szükség van
+\end{itemize}
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item result: a kézi értékelés eredménye
+\end{itemize}
+
+\subsubsection{Runner}
+\textbf{Leírás:} futtatható állomány futtatását végző blokk \\
+\textbf{Tulajdonságok:} -- \\
+\textbf{Bemenetek:}
+\begin{itemize}
+    \item environment: környezeti változók a futtatás során
+    \item files\_in: bemeneti fájlok, melyeket a futtatott állomány felhasználhat
+    \item runnable: a futtatandó állomány
+    \item stdin: szabványos bemenet
+\end{itemize}
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item files\_out: kimeneti fájlok, melyek a futás során keletkeztek vagy módosultak
+    \item stderr: szabványos hibakimenet
+    \item stdout: szabványos kimenet
+\end{itemize}
+
+\subsubsection{Script}
+\textbf{Leírás:} a feladat létrehozásakor megadott szkriptet futtató blokk \\
+\textbf{Tulajdonságok:}
+\begin{itemize}
+    \item language: a programnyelv, amelyen a szkript íródott
+\end{itemize}
+\textbf{Bemenetek:}
+\begin{itemize}
+    \item environment: környezeti változók a futtatás során
+    \item files\_in: bemeneti fájlok, melyeket a futtatott szkript felhasználhat
+    \item stdin: szabványos bemenet
+\end{itemize}
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item files\_out: kimeneti fájlok, melyek a futás során keletkeztek vagy módosultak
+    \item stderr: szabványos hibakimenet
+    \item stdout: szabványos kimenet
+\end{itemize}
+
+\subsubsection{Specification}
+\textbf{Leírás:} feladat specifikációját megadó blokk \\
+\textbf{Tulajdonságok:}
+\begin{itemize}
+    \item template\_text: a specifikáció szövegének sablonja
+\end{itemize}
+\textbf{Bemenetek:}
+\begin{itemize}
+    \item template\_params: a specifikáció szövegének sablonjába behelyettesítendő értékek
+\end{itemize}
+\textbf{Kimenetek:} --
+
+\subsubsection{SubmissionResult}
+\textbf{Leírás:} a feladatra adott megoldás eredményét megadó blokk \\
+\textbf{Tulajdonságok:} -- \\
+\textbf{Bemenetek:}
+\begin{itemize}
+    \item source: a megoldás eredménye
+\end{itemize}
+\textbf{Kimenetek:} --
+
+\subsubsection{UserFile}
+\textbf{Leírás:} a hallgató által a megoldásához feltöltött fájlt tartalmazó blokk \\
+\textbf{Tulajdonságok:}
+\begin{itemize}
+    \item allowed\_extensions: a feltöltött fájl engedélyezett kiterjesztései
+    \item size\_limit: a feltölthető fájl maximális mérete
+\end{itemize}
+\textbf{Bemenetek:} -- \\
+\textbf{Kimenetek:}
+\begin{itemize}
+    \item output: a hallgató által feltöltött fájl tartalma
+\end{itemize}
