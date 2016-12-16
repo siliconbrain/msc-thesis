@@ -7,12 +7,12 @@ A portálnak ebben az újabb változatában fontos cél, hogy ez az alrendszer f
 Ezt a flexibilitást egy általánosabb, de mégis egységes felépítés alkalmazásával igyekeztem elérni.
 Az általam megtervezett rendszer a programnyelvek használatához kapcsolódó eszközök (pl. fordítók, interpreterek, tesztelési környezetek) alacsonyszintű működését egy közös, magasabb szintű absztrakció mögé rejti, melynek hatására a rendszer bővíthetősége megnő, és akár nem programozási jellegű feladatok készítésére is alkalmassá válik.
 
-Ebben a felezetben végigvezetem az olvasót a modul megtervezésének folyamatán, a követelmények összegyűjtésétől, a megtervezett rendszer működésének és használatának leírásán át, egészen az implementációhoz szükséges technológiák bemutatásáig.
+Ebben a fejezetben végigvezetem az olvasót a modul megtervezésének folyamatán, a követelmények összegyűjtésétől a megtervezett rendszer működésének és használatának leírásán át, egészen az implementációhoz szükséges technológiák bemutatásáig.
 
 \section{Követelmények}
 A tervezés első lépése a tervezendő modullal szemben támasztott követelmények felmérése, amit a már meglévő munka elemzésével kezdtem.
 A modul követelményeinek túlnyomú részét \cite{Ory13} már azonosította, miközben a portál egészére nézve végezte el ezt a feladatot.
-\cite{Kalman14} tovább pontosította a követelményeket, miközben a portál más aspektusainak fejlesztésén dolgozott.
+A \cite{Kalman14} szakdolgozat tovább pontosította a követelményeket, miközben a portál más aspektusainak fejlesztésén dolgozott.
 Az általuk feltárt követelmények a következők:
 \begin{enumerate}
     \item A hallgató listázhatja és megtekintheti a számára kiosztott feladatokat.
@@ -87,12 +87,12 @@ Egy másik lehetséges algoritmus, ha a függőségi gráfot a lehető legkevese
 Az azonos szinten lévő csúcsok egymástól függetlenül kiértékelhetőek, amit kihasználhatunk, ha lehetőségünk van párhuzamos végrehajtásra.
 
 A ``pipe'' és ``filter'' szavakat az informatikában sok esetben használják, gyakran hasonló, de eltérő jelentésekkel.
-Ezzel összevágóan a Python nyelvben a ``filter'' szó egy beépített függvényre hivatkozik, és a ``pipe'' szó is sok beépített függvénykönyvtárban előforul.
+Ezzel összhangban a Python nyelvben a ``filter'' szó egy beépített függvényre hivatkozik, és a ``pipe'' szó is sok beépített függvénykönyvtárban előfordul.
 A félreértések elkerülése végett a továbbiakban a szűrőket \textit{blokkoknak} (\textit{block}), a csővezetékeket pedig \textit{azonosítóknak} (\textit{handle}) fogom nevezni.
 Ez azért is előnyös, mert a szóhasználat jobban utal a minta konkrét megvalósítására, amely jobban hasonlít a matematikai feladványokból ismert ``műveleti gépekhez''.
 
 \section{Feladatok leírása}
-Az előzőekben leírtak alapján, szinte adja magát a feladatok leírására szolgáló modell, melynek két központi eleme a \texttt{Block} és a \texttt{Handle} osztályok.
+Az előzőekben vázoltak alapján, szinte adja magát a feladatok leírására szolgáló modell, melynek két központi eleme a \texttt{Block} és a \texttt{Handle} osztályok.
 A \texttt{Block} absztakt ősosztályként szolgál a különböző funkciókat (pl. fájlfeltöltés, fordítás, futtatás, ellenőrzés) megvalósító blokk osztályok számára.
 Az ezekből példányosított blokkok pontosan egy feladatnak részei, melyet az \texttt{Exercise} osztály modellez.
 A blokkokat a \texttt{Handle} osztály példányai kötik össze, melyek egy feladaton belül egyedi névvel rendelkeznek.
@@ -110,7 +110,7 @@ Az itt leírt modellosztályokat szemléltető UML osztálydiagram a \ref{figure
     \centering
     \includegraphics[width=\textwidth]{figures/exercise-uml-cd}
     \smallskip
-    \caption{Feladatleíró modul UML osztálydiagrammja}
+    \caption{Feladatleíró modul UML osztálydiagramja}
     \label{figure:exercise-uml-cd}
 \end{figure}
 

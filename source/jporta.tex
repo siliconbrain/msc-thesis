@@ -17,16 +17,16 @@ A Cporta ezen kívül tanulmányi rendszer jellegű funkciókat is megvalósít:
     \includegraphics[width=\textwidth]{figures/Cporta}
     \caption{A Cporta felülete}
 \end{figure}
-A ezeket a funkciókat a Jporta bevezetéséig továbbra is a Cporta látja el \textit{A programozás alapjai 2.} tárgy esetében.
+Ezeket a funkciókat a Jporta bevezetéséig továbbra is a Cporta látja el \textit{A programozás alapjai 2.} tárgy esetében.
 
 \subsection{A Cporta működése}
 A Cportán -- ahogy az oktatásban általában -- a feladatokat az oktatók készíthetik el.
 A feladatok több részből állnak:
 \begin{itemize}
-    \item metaadatok (cím, szerző, fordítási paraméterek, futtatási korlátozások, stb.)
-    \item specifikáció (a feladat leírása HTML formában)
-    \item oktató által megadott fájlok
-    \item tesztesetek
+    \item metaadatok (cím, szerző, fordítási paraméterek, futtatási korlátozások, stb.),
+    \item specifikáció (a feladat leírása HTML formában),
+    \item oktató által megadott fájlok,
+    \item tesztesetek.
 \end{itemize}
 A feladat specifikációja lehet statikus, vagy a hallgató adatai alapján dinamikusan generált, így lehetőség van hasonló, ám hallgatónként egyedi feladatok készítésére.
 Az oktató által megadott fájlok lehetnek nyilvánosak (pl. a használható függvények fejléceit tartalmazó állomány), vagy rejtettek (pl. a teszteléshez használt bemeneti adatfájlok).
@@ -122,7 +122,7 @@ Ezeken felül az oktatók számára is rendelkezésre állnak a szakasz végén 
 
 \subsection{Adminisztrátori felületek}
 Az adminisztrátori jogkörrel rendelkező felhasználók számára elérhető az \textit{Irányítópult} (Management dashboard), ami a \ref{figure:jporta-management-dashboard}. ábrán látható.
-Erről a felületről elérhető és kereshető az összes ismert felhasználó listája, illetve itt történik a szemeszterek adminisztrálása is.
+Ezen a felületen megtalálható és kereshető az összes ismert felhasználó listája, illetve itt történik a szemeszterek adminisztrálása is.
 A \textit{Szemeszter} szekcióban láthatóak az eddig létrehozott szemeszterek, kezdő- és végdátumaikkal együtt, valamit egy szemléltető diagram ezekről az időszakokról.
 Itt hozhatunk létre új szemesztereket, vagy ha szükséges, törölhetjük is őket. 
 A jobb felső sarokban található \textit{Django admin} gomb átvezet a Django keretrendszer beépített adminisztrációs felületére, melyről részletesebb leírást \cite{DjangoAdmin} ad.
@@ -133,14 +133,14 @@ A jobb felső sarokban található \textit{Django admin} gomb átvezet a Django 
     \label{figure:jporta-management-dashboard}
 \end{figure}
 
-\sectsep
+Végül térjünk vissza a közös, minden felhasználó számára rendelkezésre álló funkciók tárgyalásához.
 
 % Üzenetküldés
 Az összes felhasználó számára rendelkezésre áll továbbá egy beépített üzenetküldés funkció, amelynek segítségével anélkül tudnak egymásnak üzenni a felhasználók, hogy ismerniük kellene címzettük, címzettjeik e-mail címeit.
 Minden felhasználó megtekintheti a beérkezett üzeneteit a portál dedikált felületén (\figref{jporta-inbox}), de ha rendelkezik megadott e-mail címmel, akkor az üzenetek erre a címre is továbbításra kerülnek, sőt, a rendszer érzékeli, ha a levelet egy külső levelezőben olvasta a felhasználó, és azt belül is olvasottnak nyilvánítja.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{figures/Jporta-inbox}
+    \includegraphics[width=0.95\textwidth]{figures/Jporta-inbox}
     \caption{Bejövő üzenetek}
     \label{figure:jporta-inbox}
 \end{figure}
@@ -148,10 +148,10 @@ A tárgyért felelős oktatók a tárgy oldalán található \textit{Üzenetek} 
 Ehhez hasonlóan a kurzuscsoportok oktatói is tudnak üzenetet küldeni saját csoportjaiknak.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{figures/Jporta-course-messages}
+    \includegraphics[width=0.95\textwidth]{figures/Jporta-course-messages}
     \caption{Kurzus szintű üzenetküldés}
     \label{figure:jporta-course-messages}
 \end{figure}
 
 % Profil
-Végül, minden felhasználó rendelkezik egy profilllal, ahol a fontosabb információ találhatóak meg (név, e-mail cím, profilkép, utolsó bejelentkezés ideje), és egy személyes beállítások oldallal, ahol kiválaszthatja az általa használni kívánt nyelvet és módosíthatja profilképét.
+Végül, minden felhasználó rendelkezik egy profillal, ahol a fontosabb információk találhatóak meg (név, e-mail cím, profilkép, utolsó bejelentkezés ideje), és egy személyes beállítások oldallal, ahol kiválaszthatja az általa használni kívánt nyelvet és módosíthatja profilképét.
