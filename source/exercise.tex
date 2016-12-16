@@ -173,10 +173,16 @@ Az összerendeléskor a feladat kiválasztásán túl egy nevet és egy határid
 A feladat és a kiadás különválasztása azért fontos, mert így egy feladatot többször is fel lehet használni, akár különböző kurzusokban vagy szemeszterekben.
 
 \section{Feladatbeadás}
-% Feladatbeadás
-% Specification blokk kiértékelése az egyedi feladatokhoz
-% Submission osztály
-TODO
+A kiadott feladatok megjelennek a rendszerben a hallgatók számára, akik beadásokat készíthetnek ezekre.
+Ha a feladat tartalmaz specifikációt, annak kiértékelése a feladatkiadás első megtekintésekor esedékes.
+A hallgatók a feladatkiírás alapján elkészítik megoldásaikat, majd a felületen feltöltik a szükséges fájlokat.
+Ekkor létrejön a \ref{figure:exercise-uml-cd}. ábrán látható \texttt{Submission} osztály egy egyede, amely összekapcsolja a hallgató által készített állományokat, a feladatkiadást és magát a hallgatót.
+A beadás állapota kezdetben \textit{Kiértékelés alatt} (\texttt{under\_evaluation}) lesz.
+Ha a feladat tartalmaz kézi beavatkozást igénylő blokkot, ennek ``végrehajtása'' idejére a feladat \textit{Kézi beavatkozásra vár} (\texttt{waiting\_for\_input}) állapotba kerül.
+A beadás kiértékelése \textit{Sikeres} (\texttt{successful}) vagy \textit{Sikertelen} (\texttt{failed}) állapotban érhet véget.
+
+A hallgatók a feladatkiadás határidejének lejárta előtt többször is próbálkozhatnak a beadással, akár egy sikeres beadás után is van lehetőségük további javításra.
+Beadott megoldásaikat visszamenőleg megtekinthetik a feladatkiadás részletező oldalán.
 
 \section{Megoldások ellenőrzése és értékelése}\label{section:submission-evaluation}
 % Feladatkiértékelés konkrétan (Celery, AMQP/RabbitMQ, xattr (portal fs vs. backup fs támogatás), redis)
