@@ -129,8 +129,29 @@ A blokkok egyedi kiértékelési algoritmusát a leszármazott osztály \texttt{
 Ez a metódus paraméterként megkapja a blokk referenciáját és a blokk kiértékelésének kontextusát (lásd \ref{section:submission-evaluation}. szakasz), és ezeket felhasználva elvégzi a kimeneti értékei kiszámításához szükséges számításokat, majd a kontextusban beállítja a kimeneteinek megfelelő értékeket.
 
 \section{Feladatok készítése}
-% Feladatkészítés ebben a rendszerben (jelenlegi vs. vizuális nyelv)
-TODO
+A rendszer, általános felépítése miatt, nem tartalmaz sok megkötést a leírható feladatokra: az egyszerű PDF formátumú beadandók feltöltéstől egészen egy grafikus felülettel rendelkező, interaktív házi feladatokat fordító, futtató és tesztelő beadásokig szinte bármilyen feladat összeállítható benne.
+Ahhoz, hogy ez a változó komplexitású munkafolyamat felhasználóbarát maradjon, egy egyszerű felületre van szükség, amely nagy összetettségű feladatok esetén sem válik kezelhetetlenné.
+
+A hasonló felépítésű, adatfolyamokra alapozó modellek manipulációjára általában vizuális, csomópont alapú szerkesztőket szoktak alkalmazni.
+Ezek az eszközök azért nagyon jól használhatóak, mivel a modell kézenfekvő reprezentációját használják a vizualizációhoz, amely nagyban segíti a megértést, és egy intuitív interfészt biztosít.
+% TODO: Vizuális, csomópont alapú szerkesztő a Houdini szoftverben.
+
+Sajnos a dolgozat kereteibe nem fért bele egy ilyen eszköz kifejlesztése, ezért egy egyszerűbb megoldást kellett választanom.
+A jelenlegi interfész a feladatban található blokkokat egymás alatt jeleníti meg, az összeköttetések pedig név alapján válnak követhetővé.
+A szerkesztő az elérhető opciók felsorolásával igyekszik segíteni a felhasználók munkáját.
+
+A feladatok készítésének első lépése, hogy létrehozzuk és elnevezzük az új feladatot.
+Ezután a \ref{figure:jporta-exercise}. ábrán látható nézet fogad minket, ahol kialakíthatjuk a feladat belső struktúráját.
+Egy lenyitható részben találjuk a hozzáadható blokktípusok listáját.
+A feladatban lévő blokkokat dobozok reprezentálják, amelyek bal oldalán sorakoznak bemeneteik, jobb oldalán kimeneteik, középen pedig az egyéb tulajdonságaik.
+A blokkok összekötését a felhasználni kívánt kimenetek elnevezésével, majd a megfelelő bemeneteknél ezen nevek kiválasztásával tehetjük meg.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figures/jporta-exercise}
+    \caption{Feladattervező nézet a Jportán}
+    \label{figure:jporta-exercise}
+\end{figure}
 
 \section{Feladatok kiadása}
 % Feladatkiadás
@@ -151,13 +172,6 @@ TODO
 TODO
 
 % Fejlesztés menete: git, Vim, CIRCLE devenv
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{figures/jporta-exercise}
-    \caption{Feladattervező nézet a Jportán}
-    \label{figure:jporta-exercise}
-\end{figure}
 
 \section{Összegzés}
 TODO
