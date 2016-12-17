@@ -9,7 +9,7 @@ Az általam megtervezett rendszer a programnyelvek használatához kapcsolódó 
 
 Ebben a fejezetben végigvezetem az olvasót a modul megtervezésének folyamatán, a követelmények összegyűjtésétől a megtervezett rendszer működésének és használatának leírásán át, egészen az implementációhoz szükséges technológiák bemutatásáig.
 
-\section{Követelmények}
+\section{Követelmények}\label{section:requirements}
 A tervezés első lépése a tervezendő modullal szemben támasztott követelmények felmérése, amit a már meglévő munka elemzésével kezdtem.
 A modul követelményeinek túlnyomú részét \cite{Ory13} már azonosította, miközben a portál egészére nézve végezte el ezt a feladatot.
 A \cite{Kalman14} szakdolgozat tovább pontosította a követelményeket, miközben a portál más aspektusainak fejlesztésén dolgozott.
@@ -19,7 +19,7 @@ Az általuk feltárt követelmények a következők:
     \item A hallgató a feladatokhoz megoldást adhat be.
     \item A hallgató megtekintheti korábban beadott megoldásait és azok eredményeit.
     \item Az oktató új feladatot hozhat létre.
-    \item \label{item:specification} A feladatok tartalmaznak feladatkiírást, amely lehet statikus vagy dinamikusan generált.
+    \item \label{req:specification} A feladatok tartalmaznak feladatkiírást, amely lehet statikus vagy dinamikusan generált.
     \item A feladatoknak része lehet egy vagy több fájl, amelyeket az oktató ad meg.
     \item A feladatoknak része lehet egy vagy több fájl, melyet a hallgatónak kell beadnia.
     \item A feladatok tartalmaznak automatikusan végrehajtható ellenőrzéseket.
@@ -27,37 +27,37 @@ Az általuk feltárt követelmények a következők:
     \item Az oktató a feladatra beadott megoldásokat listázhatja, megtekintheti azok tartalmát, eredményét.
     \item A rendszer bővíthető új nyelvek, környezetek, eszközök támogatásával.
     \item Egy feladatkörben több alternatív eszköz (pl. GCC és Clang C fordítók) támogatása, akár egy feladaton belül is.
-    \item \label{item:isolation} A megoldások kiértékelése izolált környezetben történik.
-    \item A kiértékelés elosztott rendszerben, tetszőleges számú gépen működik.
+    \item \label{req:isolation} A megoldások kiértékelése izolált környezetben történik.
+    \item \label{req:distributed} A kiértékelés elosztott rendszerben, tetszőleges számú gépen működik.
 \end{enumerate}
 Ezek a követelmények részben megegyeznek a Cporta eredeti követelményeivel, illetve tartalmaznak a Cporta használata közben megfogalmazott igényeket is.
 A Jporta első, demó változatának próbája során azonban további igények fogalmazódtak meg a felhasználókban, melyek a feladatkiértékelő modult is érintették.
 Ezek alapján én az alábbi kiegészítéseket teszem a követelmények már meglévő listájához:
 \begin{enumerate}[resume]
-    \item \label{item:manual} A feladatok tartalmazhatnak emberi beavatkozást igénylő ellenőrzéseket.
-    \item \label{item:traceability} A kiértékelés folyamata legyen nyomonkövethető.
+    \item \label{req:manual} A feladatok tartalmazhatnak emberi beavatkozást igénylő ellenőrzéseket.
+    \item \label{req:traceability} A kiértékelés folyamata legyen nyomonkövethető.
 \end{enumerate}
 
 A követelmények nagy része nem igényel magyarázatot, ám van néhány, amelyekről szeretnék még pár szót szólni.
 
-Az \ref{item:specification}. követelmény a feladatkiírás szövegének dinamikus generálhatóságát írja elő.
+Az \ref{req:specification}. követelmény a feladatkiírás szövegének dinamikus generálhatóságát írja elő.
 Ez azt jelenti, hogy a feladatkiírás hallgatónként eltérő lehet, amely eltérés a hallgató személyétől, pontosabban a személyéhez kapcsolódó, rendelkezésre álló információktól függ.
 Ilyen adat lehet például a hallgató neve, Neptun kódja, e-mail címe, felhasználóneve, stb.
 Ezenkívül, a generáláshoz felhasználható bármilyen, a generálás pillanatában rendelkezésre álló erőforrás, pl. az oktató által megadott fájl, kerülendő azonban a nem megismételhető műveletekkel szerezhető adatok felhasználása (pl. aktuális idő lekérdezése, az operációs rendszer véletlenszám generátorának használata).
 
-A \ref{item:isolation}. követelmény előírja, hogy a feladatok kiértékelése izolált környezetben történjen.
+A \ref{req:isolation}. követelmény előírja, hogy a feladatok kiértékelése izolált környezetben történjen.
 Ez nagyon fontos kitétel a rendszer biztonsága és stabilitása szempontjából.
 Az izoláció egyrészt védi a gazda rendszert, amelyben a kiértékelések végbemennek, másrészt az egyidejűleg futó kiértékeléseket is védi egymástól.
 
-A \ref{item:manual}. követelményre azért van szükség, mert a informatika jelenlegi eszközeivel nem minden ellenőrzés valósítható meg, néha elkerülhetetlen az emberi beavatkozás szükségessége.
+A \ref{req:manual}. követelményre azért van szükség, mert a informatika jelenlegi eszközeivel nem minden ellenőrzés valósítható meg, néha elkerülhetetlen az emberi beavatkozás szükségessége.
 A rendszer előző változataiban azonban nem volt ilyen jellegű funkció, a kiértékelés minden lépése automatizáltan történt.
 Ez az új igény azonban jelentős változással jár a kiértékelés menetében, ugyanis egy potenciálisan végtelen, de mindenképp az eddigiekhez képest hosszú várakozást -- max. pár 100 milliszekundum kontra percek, órák, napok -- iktat be a folyamatba.
 Ahhoz, hogy ezalatt a várakozás alatt a kiértékelést végző rendszer erőforrásai ne legyenek feleslegesen lefoglalva, a kiértékelés végrehajtása nem történhet egyetlen folytonos menetben, szükség van a folyamat állapotának elmentésére, majd visszatöltésére és a kiértékelés folytatására az emberi beavatkozás elvégzése után.
 
-A \ref{item:traceability}. követelményre a rendszer auditálhatósága miatt van szükség, de a feladatokban, esetleg a feladatot kiértékelő rendszerben előforduló hibák feltárását és kezelését is megkönnyíti.
+A \ref{req:traceability}. követelményre a rendszer auditálhatósága miatt van szükség, de a feladatokban, esetleg a feladatot kiértékelő rendszerben előforduló hibák feltárását és kezelését is megkönnyíti.
 A követelmény teljesítéséhez rendelkezésünkre kell állnia a kiértékelés mindenkori állapotának, illetve a kiértékelés során keletkezett részeredményeknek.
 
-\section{A feladatkiértékelő modul működése}
+\section{A feladatkiértékelő modul működése}\label{section:execution-procedure}
 Az újratervezett feladatkiértékelő modul felépítését a \textit{csővezetékek és szűrők} (\textit{pipes and filters}, \cite{PipesAndFilters}) architektúrális tervezési mintára alapoztam.
 A \textit{szűrők} a feladatok kiértékelési lépéseit (pl. fordítás, futtatás, tesztelés) reprezentálják, míg a \textit{csővezetékek} a lépések közötti adatáramlást.
 A \ref{figure:example-pipeline}. ábrán a leggyakrabban előforduló feladat felépítés sematikus képe látható, melyen a különféle ``dobozok'' testesítik meg a szűrőket, a köztük vezető nyilak pedig a csővezetékeket, melyek egyúttal az adatáramlás irányát is szemléltetik.
@@ -128,7 +128,7 @@ Ez az objektum az eredeti \texttt{Block\-Property} paraméterein és a hozzá ve
 A blokkok egyedi kiértékelési algoritmusát a leszármazott osztály \texttt{evaluate} metódusa valósítja meg.
 Ez a metódus paraméterként megkapja a blokk referenciáját és a blokk kiértékelésének kontextusát (lásd \ref{section:submission-evaluation}. szakasz), és ezeket felhasználva elvégzi a kimeneti értékei kiszámításához szükséges számításokat, majd a kontextusban beállítja a kimeneteinek megfelelő értékeket.
 
-\section{Feladatok készítése}
+\section{Feladatok készítése}\label{section:exercise-creation}
 A rendszer, általános felépítése miatt, nem tartalmaz sok megkötést a leírható feladatokra: az egyszerű PDF formátumú beadandók feltöltéstől egészen egy grafikus felülettel rendelkező, interaktív házi feladatokat fordító, futtató és tesztelő beadásokig szinte bármilyen feladat összeállítható benne.
 Ahhoz, hogy ez a változó komplexitású munkafolyamat felhasználóbarát maradjon, egy egyszerű felületre van szükség, amely nagy összetettségű feladatok esetén sem válik kezelhetetlenné.
 
@@ -172,7 +172,7 @@ Publikálás után a feladat megjelenik a kiadható feladatok listájában, ahho
 Az összerendeléskor a feladat kiválasztásán túl egy nevet és egy határidőt is meg kell adni.
 A feladat és a kiadás különválasztása azért fontos, mert így egy feladatot többször is fel lehet használni, akár különböző kurzusokban vagy szemeszterekben.
 
-\section{Feladatbeadás}
+\section{Feladatbeadás}\label{section:submission}
 A kiadott feladatok megjelennek a rendszerben a hallgatók számára, akik beadásokat készíthetnek ezekre.
 Ha a feladat tartalmaz specifikációt, annak kiértékelése a feladatkiadás első megtekintésekor esedékes.
 A hallgatók a feladatkiírás alapján elkészítik megoldásaikat, majd a felületen feltöltik a szükséges fájlokat.
@@ -185,18 +185,67 @@ A hallgatók a feladatkiadás határidejének lejárta előtt többször is pró
 Beadott megoldásaikat visszamenőleg megtekinthetik a feladatkiadás részletező oldalán.
 
 \section{Megoldások ellenőrzése és értékelése}\label{section:submission-evaluation}
-% Feladatkiértékelés konkrétan (Celery, AMQP/RabbitMQ, xattr (portal fs vs. backup fs támogatás), redis)
-% A kiértékelés a SubmissionResult blokktól indul
-% EvaluationContext
-TODO
+A feladatkiértékelő rendszer második fő feladata a hallgatók által beadott megoldások kiértékelése.
+Ahogy az előző szakaszban láthattuk, amikor a hallgató a webportálon beadja a megoldását, létrejön egy \texttt{Submission} típusú objektum, amely ezt a beadást szimbolizálja.
+Emellett, a beadás részeként feltöltött fájlokat a rendszer eltárolja, de már nem az eredeti, feltöltéskori nevükkelel, hanem annak az azonosítónak a nevével, amelyen az egyes fájlok hivatkozhatóak.
+Ha például a feladatban szereplő \texttt{UserFile} blokk \textit{output} nevű kimenetét egy \textit{dokumentáció} elnevezésű azonosítóhoz kapcsoljuk, akkor a fájl neve a fájlrendszerben \textit{dokumentáció} lesz.
+Ez azért előnyös, mert így a későbbi fájleléréseknek nem kell egy táblából kiolvasniuk, hogy milyen fájlnév alatt találják meg a keresett erőforrást.
+Ugyanakkor bizonyos esetekben szükség lehet a fájl eredeti nevére, például a beadás megtekintésénél zavaró lehetne a hallgató számára, ha az ő általa \textit{első\_specifikációm.docx} néven feltöltött fájlt \textit{dokumentum} fájlnévvel találná meg.
+Ilyen jellegű metaadatok tárolására a rendszer a \textit{kiterjesztett fájlattribútumok} (\textit{extended file attributes}) fájlrendszer funkciót használja.
+Ez azért praktikus, mert a fájlhoz kötődik, azzal együtt mozog, törlődik, így a konzisztencia megörzésére nem kell további erőforrásokat fordítani.
+Ezt a funkciót nagyon sok rendszer támogatja, hátránya viszont, hogy csak limitált mennyiségű adat (körülbelül pár 10 kilobájt) tárolására képes, ami azonban a mi esetünkben bőven elégséges. \cite{wiki:ExtendedFileAttributes}
+% xattr: portal fs vs. backup fs támogatja-e
+
+A beadások ezután bekerülnek a kiértékelő modul várakozási sorába aszinkron feldolgozásra, ezzel biztosítva a webportál minél kisebb késleltetését.
+Ez a feldolgozási sor a jelenlegi rendszerben Celery segítségével kerül megvalósításra.
+
+A Celery egy Pythonban íródott, nyílt forrású, aszinkron feladatvégrehajtásra specializálódott szoftver, mely elosztott üzenetküldési képességekkel is rendelkezik, ezáltal távoli eljáráshívás implementációjára is alkalmas.
+A feladatok végrehajtását a Celery konkurrensen végzi, mégpedig úgy, hogy továbbítja azokat egy vagy több feldolgozófolyamatnak (\textit{worker process}), melyek akár különböző gépeken is elhelyezkedhetnek, teljesítve ezáltal a \ref{section:requirements}. szakaszban említett \ref{req:distributed}. követelményt.
+A feldolgozók futhatnak egy, de akár többszálon is, illetve felhasználhatják az eventlet vagy gevent Python-alapú korutin függvénykönyvtárakat is.
+A Celery az elosztott üzenetküldés funkciót többféle bróker felhasználásával is meg tudja valósítani, amelyek lehetnek AMQP (pl. RabbitMQ, ZeroMQ), kulcs--érték adatbázis (pl. Redis, MongoDB) vagy relációs adatbázis (SQLAlchemy, Django ORM) alapúak is.
+A Jporta esetében a leginkább ajánlott RabbitMQ Advanced Message Queuing Protocol-t megvalósító bróker szoftvert válaszottam az üzenetek szétosztására a végpontok között. \cite{wiki:Celery} \cite{Celery}
+
+A kiértékelő modul ezt a beadásokkal teli várakozási sort dolgozza fel, az egyes feladatok kiértékelését pedig a \ref{section:execution-procedure}. szakaszban leírt módon végzi.
+Ilyenkor a folyamat a feladatban található \texttt{SubmissionResult} blokktól indul, ami a feladat eredményét reprezentálja, hiszen ez az, aminek az értékére szükségünk van.
+A kiértékelés során minden érintett blokk \texttt{evaluate} metódusa meghívásra kerül, mégpedig egy \texttt{EvaluationContext} típusú paraméterrel.
+Ez a ``kiértékelési környezet'' tartamazza a szükséges információkat a kiértékelés végrehajtásához.
+A kontextuson keresztül érhetőek el a hallgató által feltöltött fájlok, a hallgató adatai, vagy más külső erőforrás.
+
+Az \texttt{evaluate} metódus törzsében további aszinkron távoli eljáráshívások történhetnek, amelyek szintén Celery révén kerülnek elvégzése, ám ez már nem a feladatkiértékelő modul feladata, hanem a \textit{végrehajtó moduloké}.
+A végrehajtó modulok implementálják az olyan fontos feladatokat, mint a forráskódok fordítása, futtatható állományok, szkriptek és tesztek futtatása.
+A szükséges végrehajtó modulok a feladatokban felhasznált blokkok implementációjától függenek, magától a kiértékelő modultól, annak működésétől függetlenek, így részletes tárgyalásuk túlmutat a dolgozat keretein.
+
+Az akár helyben, szinkron módon, akár a végrehajtó modulok által máshol, aszinkron módon elvégzett számítások eredményeit -- \textit{termékeit} -- a kiértékelő modul az \texttt{Artifact} osztály felhasználásával tárolja el.
+Az \texttt{Artifact} osztály a blokkok kiértékelésének ``melléktermékeit'' szimbolizálja.
+Az osztály példányosításához egy azonosítóra és egy kontextusra van szükség, amelyek tartalmazzás a szükséges információt az állományok eléréséhez.
+Ahhoz, hogy ezeket a termékeket egyértelműen azonosítani tudja a rendszer, a következő információkra van szüksége:
+\begin{itemize}
+    \item a feladat egyedi azonosítója,
+    \item a feladatkiadás egyedi azonosítója,
+    \item az azonosító neve, amellyel a feladatban a termékre hivatkozunk,
+    \item ha rendelkezésre áll, a beadás egyedi azonosítója,
+    \item ha rendelkezésre áll, a kiértékelést indítványozó felhasználó egyedi azonosítója.
+\end{itemize}
+Az opcionálisan megjelölt adatok nem minden kiértékelésnél állnak rendelkezésre, például a feladatkiírás kiértékelésénél beadás még nem létezik, így ehhez nem köthető erőforrás.
+Ezeken túl az azonosító -- az őt előállító kimenet beállítása révén -- meghatározza a termék tárolásának módját is.
+Vannak olyan termékek, amelyek perzisztens tárolására nincs szükség, ezért elég, ha a memóriában helyezzük el őket, más termékeket viszont indokolt lehet fájlokban vagy adatbázisban tárolni.
+Az előbbi kategóriába eső termékeket a Jporta egy Redis tárolóban helyezi el, utóbbiakat rendre a fájlrendszerben vagy a Django által felügyelt relációs adatbázisban.
+
+A Redis egy C nyelven ír, nyílt forráskódú, memóriabeli kulcs--adatszerkezet tároló, amely használható adatbázisként, gyorsítótárként vagy -- az előzőekben már említett -- üzenet brókerként is.
+\cite{Redis}
+A Jporta implementációjánál kiváló gyorsítótár tulajdonsága, és átfogó utasításkészlete miatt választottam.
 
 % Fejlesztés menete: git, Vim, CIRCLE devenv
 
 \section{Összegzés}
-TODO
-% To-Do:
-% * beágyazás a Jportába (feladatok, blokkok megjelenítése)
-% * részletes dokumentáció (a jelen dolgozat mellett...)
+Ebben a fejezetben prezentáltam a Jporta új feladatkiértékelő alrendszerének tervezési lépéseit.
+Bemutattam, hogyan képes a rendszer feladatok leírására, illetve minként állíthatóak össze benne új feladatok.
+Ezután röviden leírtam a feladatkiadás és -beadás működését, hogy végül eljuthassunk a beadások kiértékelésének problémájához.
+Az általam vázolt megoldás ugyan megvalósítja az elvárt funkcionalitást, de a dolgozat írásának idején még közel sem tekinthető késznek.
+
+A funkció csak kezdetlegesen került beágyazásra a Jporta felületébe, továbbá véleményem szerint a \ref{section:exercise-creation}. szakaszban vázolt vizuális szerkesztőeszköz sokat javítana a feladatkészítés folyamatának ergonómiáján.
+Hiányos még a rendelkezésre álló blokkok listája is, amelyek sokszor félkész megoldásként szolgálhatnának a feladatok összeállításánál.
+Elkészült azonban a blokkok egy minimális csoportja, amelyeket a következő szakasz részletez.
 
 \subsection{Elkészült blokkok}
 Ebben a szakaszban sorraveszem és röviden bemutatom a dolgozat befejezéséig elkészült blokktípusokat.
