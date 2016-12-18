@@ -129,7 +129,7 @@ A blokkok egyedi kiértékelési algoritmusát a leszármazott osztály \texttt{
 Ez a metódus paraméterként megkapja a blokk referenciáját és a blokk kiértékelésének kontextusát (lásd \ref{section:submission-evaluation}. szakasz), és ezeket felhasználva elvégzi a kimeneti értékei kiszámításához szükséges számításokat, majd a kontextusban beállítja a kimeneteinek megfelelő értékeket.
 
 \section{Feladatok készítése}\label{section:exercise-creation}
-A rendszer, általános felépítése miatt, nem tartalmaz sok megkötést a leírható feladatokra: az egyszerű PDF formátumú beadandók feltöltéstől egészen egy grafikus felülettel rendelkező, interaktív házi feladatokat fordító, futtató és tesztelő beadásokig szinte bármilyen feladat összeállítható benne.
+A rendszer, általános felépítése miatt, nem tartalmaz sok megkötést a leírható feladatokra: az egyszerű PDF formátumú beadandók feltöltésétől egészen a grafikus felülettel rendelkező, interaktív házi feladatokat fordító, futtató és tesztelő beadásokig szinte bármilyen feladat összeállítható benne.
 Ahhoz, hogy ez a változó komplexitású munkafolyamat felhasználóbarát maradjon, egy egyszerű felületre van szükség, amely nagy összetettségű feladatok esetén sem válik kezelhetetlenné.
 
 A hasonló felépítésű, adatfolyamokra alapozó modellek manipulációjára általában vizuális, csomópont alapú szerkesztőket szoktak alkalmazni.
@@ -137,10 +137,10 @@ Ezek az eszközök azért nagyon jól használhatóak, mivel a modell kézenfekv
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{figures/node-based-editor}
-    % forrás: https://3dpalmieri.wordpress.com/2012/09/13/dynamics-and-visual-effects-studio-2/
-    \caption{Vizuális, csomópont alapú szerkesztő a Maya 3D modellezőben}
+    \caption[Vizuális, csomópont alapú szerkesztő a Maya 3D modellezőben]{Vizuális, csomópont alapú szerkesztő a Maya 3D modellezőben\footnotemark}
     \label{figure:node-based-editor}
 \end{figure}
+\footnotetext{Forrás: Christian Palmieri: Dynamics and Visual Effects: Studio 2 \\ \url{https://3dpalmieri.wordpress.com/2012/09/13/dynamics-and-visual-effects-studio-2/}}
 
 Sajnos a dolgozat kereteibe nem fért bele egy ilyen eszköz kifejlesztése, ezért egy egyszerűbb megoldást kellett választanom.
 A jelenlegi interfész a feladatban található blokkokat egymás alatt jeleníti meg, az összeköttetések pedig név alapján válnak követhetővé.
@@ -149,7 +149,7 @@ A szerkesztő az elérhető opciók felsorolásával igyekszik segíteni a felha
 A feladatok készítésének első lépése, hogy létrehozzuk és elnevezzük az új feladatot.
 Ezután a \ref{figure:jporta-exercise}. ábrán látható nézet fogad minket, ahol kialakíthatjuk a feladat belső struktúráját.
 Egy lenyitható részben találjuk a hozzáadható blokktípusok listáját.
-A feladatban lévő blokkokat dobozok reprezentálják, amelyek bal oldalán sorakoznak bemeneteik, jobb oldalán kimeneteik, középen pedig az egyéb tulajdonságaik.
+A feladatban lévő blokkokat dobozok reprezentálják, amelyek bal oldalán sorakoznak a bemeneteik, jobb oldalán a kimeneteik, középen pedig az egyéb tulajdonságaik.
 A blokkok összekötését a felhasználni kívánt kimenetek elnevezésével, majd a megfelelő bemeneteknél ezen nevek kiválasztásával tehetjük meg.
 
 \begin{figure}[h]
@@ -161,8 +161,8 @@ A blokkok összekötését a felhasználni kívánt kimenetek elnevezésével, m
 
 \section{Feladatok kiadása}
 Miután a feladatok elkészültek, nincs más hátra, mint kiadni őket a hallgatóknak.
-Ehhez két dologot kell megtennie az oktatónak: egyrészt véglegesíteni kell a feladatot, másrészt hozzá kell rendelni azt a hallgatók egy csoportjához.
-Az előbbi a \ref{figure:jporta-exercise}. ábrán is látható \textbf{Publikálás} gombbal tehető meg a feladat szerkesztő nézetében.
+Ehhez két dolgot kell megtennie az oktatónak: egyrészt véglegesíteni kell a feladatot, másrészt hozzá kell rendelni azt a hallgatók egy csoportjához.
+Az előbbi a \ref{figure:jporta-exercise}. ábrán is látható \textit{Publikálás} gombbal tehető meg a feladat szerkesztő nézetében.
 Erre szintén két okból van szükség.
 Egyrészt, ilyenkor végzi el a rendszer a feladat konzisztencia-ellenőrzését: minden kötelező mező kitöltésre került-e, nincs-e a függőségi gráfban kör, stb.
 Másrészt, ekkor a feladat véglegesítésre kerül, ezután a lépés után nem lehet további változtatásokat végezni rajta egészen addig, míg visszavonásra nem kerül.
@@ -187,7 +187,7 @@ Beadott megoldásaikat visszamenőleg megtekinthetik a feladatkiadás részletez
 \section{Megoldások ellenőrzése és értékelése}\label{section:submission-evaluation}
 A feladatkiértékelő rendszer második fő feladata a hallgatók által beadott megoldások kiértékelése.
 Ahogy az előző szakaszban láthattuk, amikor a hallgató a webportálon beadja a megoldását, létrejön egy \texttt{Submission} típusú objektum, amely ezt a beadást szimbolizálja.
-Emellett, a beadás részeként feltöltött fájlokat a rendszer eltárolja, de már nem az eredeti, feltöltéskori nevükkelel, hanem annak az azonosítónak a nevével, amelyen az egyes fájlok hivatkozhatóak.
+Emellett, a beadás részeként feltöltött fájlokat a rendszer eltárolja, de már nem az eredeti, feltöltéskori nevükkel, hanem annak az azonosítónak a nevével, amelyen az egyes fájlok hivatkozhatóak.
 Ha például a feladatban szereplő \texttt{UserFile} blokk \textit{output} nevű kimenetét egy \textit{dokumentáció} elnevezésű azonosítóhoz kapcsoljuk, akkor a fájl neve a fájlrendszerben \textit{dokumentáció} lesz.
 Ez azért előnyös, mert így a későbbi fájleléréseknek nem kell egy táblából kiolvasniuk, hogy milyen fájlnév alatt találják meg a keresett erőforrást.
 Ugyanakkor bizonyos esetekben szükség lehet a fájl eredeti nevére, például a beadás megtekintésénél zavaró lehetne a hallgató számára, ha az ő általa \textit{első\_specifikációm.docx} néven feltöltött fájlt \textit{dokumentum} fájlnévvel találná meg.
@@ -205,6 +205,8 @@ A feldolgozók futhatnak egy, de akár többszálon is, illetve felhasználhatj�
 A Celery az elosztott üzenetküldés funkciót többféle bróker felhasználásával is meg tudja valósítani, amelyek lehetnek AMQP (pl. RabbitMQ, ZeroMQ), kulcs--érték adatbázis (pl. Redis, MongoDB) vagy relációs adatbázis (SQLAlchemy, Django ORM) alapúak is.
 A Jporta esetében a leginkább ajánlott RabbitMQ Advanced Message Queuing Protocol-t megvalósító bróker szoftvert válaszottam az üzenetek szétosztására a végpontok között. \cite{wiki:Celery} \cite{Celery}
 
+% ide lehetne írni a RabbitMQ-ról
+
 A kiértékelő modul ezt a beadásokkal teli várakozási sort dolgozza fel, az egyes feladatok kiértékelését pedig a \ref{section:execution-procedure}. szakaszban leírt módon végzi.
 Ilyenkor a folyamat a feladatban található \texttt{SubmissionResult} blokktól indul, ami a feladat eredményét reprezentálja, hiszen ez az, aminek az értékére szükségünk van.
 A kiértékelés során minden érintett blokk \texttt{evaluate} metódusa meghívásra kerül, mégpedig egy \texttt{EvaluationContext} típusú paraméterrel.
@@ -215,40 +217,40 @@ Az \texttt{evaluate} metódus törzsében további aszinkron távoli eljárásh�
 A végrehajtó modulok implementálják az olyan fontos feladatokat, mint a forráskódok fordítása, futtatható állományok, szkriptek és tesztek futtatása.
 A szükséges végrehajtó modulok a feladatokban felhasznált blokkok implementációjától függenek, magától a kiértékelő modultól, annak működésétől függetlenek, így részletes tárgyalásuk túlmutat a dolgozat keretein.
 
-Az akár helyben, szinkron módon, akár a végrehajtó modulok által máshol, aszinkron módon elvégzett számítások eredményeit -- \textit{termékeit} -- a kiértékelő modul az \texttt{Artifact} osztály felhasználásával tárolja el.
+Az akár helyben, szinkron módon, akár a végrehajtó modulok által máshol, aszinkron módon elvégzett számítások eredményeit -- \textit{produktumait} -- a kiértékelő modul az \texttt{Artifact} osztály felhasználásával tárolja el.
 Az \texttt{Artifact} osztály a blokkok kiértékelésének ``melléktermékeit'' szimbolizálja.
-Az osztály példányosításához egy azonosítóra és egy kontextusra van szükség, amelyek tartalmazzás a szükséges információt az állományok eléréséhez.
-Ahhoz, hogy ezeket a termékeket egyértelműen azonosítani tudja a rendszer, a következő információkra van szüksége:
+Az osztály példányosításához egy azonosítóra és egy kontextusra van szükség, amelyek tartalmazzák a szükséges információt az állományok eléréséhez.
+Ahhoz, hogy ezeket a produktumokat egyértelműen azonosítani tudja a rendszer, a következő információkra van szüksége:
 \begin{itemize}
     \item a feladat egyedi azonosítója,
     \item a feladatkiadás egyedi azonosítója,
-    \item az azonosító neve, amellyel a feladatban a termékre hivatkozunk,
+    \item az azonosító neve, amellyel a feladatban a produktumokra hivatkozunk,
     \item ha rendelkezésre áll, a beadás egyedi azonosítója,
     \item ha rendelkezésre áll, a kiértékelést indítványozó felhasználó egyedi azonosítója.
 \end{itemize}
 Az opcionálisan megjelölt adatok nem minden kiértékelésnél állnak rendelkezésre, például a feladatkiírás kiértékelésénél beadás még nem létezik, így ehhez nem köthető erőforrás.
-Ezeken túl az azonosító -- az őt előállító kimenet beállítása révén -- meghatározza a termék tárolásának módját is.
-Vannak olyan termékek, amelyek perzisztens tárolására nincs szükség, ezért elég, ha a memóriában helyezzük el őket, más termékeket viszont indokolt lehet fájlokban vagy adatbázisban tárolni.
-Az előbbi kategóriába eső termékeket a Jporta egy Redis tárolóban helyezi el, utóbbiakat rendre a fájlrendszerben vagy a Django által felügyelt relációs adatbázisban.
+Ezeken túl az azonosító -- az őt előállító kimenet beállítása révén -- meghatározza a produktum tárolásának módját is.
+Vannak olyan produktumok, amelyek perzisztens tárolására nincs szükség, ezért elég, ha a memóriában helyezzük el őket, más produktumokat viszont indokolt lehet fájlokban vagy adatbázisban tárolni.
+Az előbbi kategóriába eső produktumokat a Jporta egy Redis tárolóban helyezi el, utóbbiakat rendre a fájlrendszerben vagy a Django által felügyelt relációs adatbázisban.
 
-A Redis egy C nyelven ír, nyílt forráskódú, memóriabeli kulcs--adatszerkezet tároló, amely használható adatbázisként, gyorsítótárként vagy -- az előzőekben már említett -- üzenet brókerként is.
-\cite{Redis}
+A Redis egy C nyelven írt, nyílt forráskódú, memóriabeli kulcs--adatszerkezet tároló, amely használható adatbázisként, gyorsítótárként vagy -- az előzőekben már említett -- üzenet brókerként is.
+\cite{Redis}  % ide még lehetne írni a Redisről
 A Jporta implementációjánál kiváló gyorsítótár tulajdonsága, és átfogó utasításkészlete miatt választottam.
 
 % Fejlesztés menete: git, Vim, CIRCLE devenv
 
 \section{Összegzés}
-Ebben a fejezetben prezentáltam a Jporta új feladatkiértékelő alrendszerének tervezési lépéseit.
-Bemutattam, hogyan képes a rendszer feladatok leírására, illetve minként állíthatóak össze benne új feladatok.
+Ebben a fejezetben ismertettem a Jporta új feladatkiértékelő alrendszerének tervezési lépéseit.
+Bemutattam, hogyan képes a rendszer feladatok leírására, illetve miként állíthatóak össze benne új feladatok.
 Ezután röviden leírtam a feladatkiadás és -beadás működését, hogy végül eljuthassunk a beadások kiértékelésének problémájához.
 Az általam vázolt megoldás ugyan megvalósítja az elvárt funkcionalitást, de a dolgozat írásának idején még közel sem tekinthető késznek.
 
 A funkció csak kezdetlegesen került beágyazásra a Jporta felületébe, továbbá véleményem szerint a \ref{section:exercise-creation}. szakaszban vázolt vizuális szerkesztőeszköz sokat javítana a feladatkészítés folyamatának ergonómiáján.
 Hiányos még a rendelkezésre álló blokkok listája is, amelyek sokszor félkész megoldásként szolgálhatnának a feladatok összeállításánál.
-Elkészült azonban a blokkok egy minimális csoportja, amelyeket a következő szakasz részletez.
+Elkészült azonban a blokkok egy csoportja, amelyeket a következő szakasz részletez.
 
 \subsection{Elkészült blokkok}
-Ebben a szakaszban sorraveszem és röviden bemutatom a dolgozat befejezéséig elkészült blokktípusokat.
+Ebben a szakaszban sorraveszem és röviden bemutatom az elkészült blokktípusokat.
 
 \subsubsection{AuthorFile}
 \textbf{Leírás:} a feladat szerzője által feltöltött fájlt tartalmazó blokk \\

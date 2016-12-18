@@ -2,10 +2,51 @@
 \chapter*{Összefoglalás}\addcontentsline{toc}{chapter}{Összefoglalás}
 %----------------------------------------------------------------------------
 
-A Jporta feladatkiértékelő funkciójának fejlesztése igen komplikált feladat, de véleményem szerint sikeresen megoldottam.
-A dolgozat \ref{chapter:jporta}. fejezetében bemutattam a Jporta célját, használatát és történelmi előzményeit.
-A \ref{chapter:exercise}. fejezetben leírtam a Jporta fő funkciójának tervezési lépéseit.
-% TODO
+Az oktatói munka intenzitásának növekedése és a számonkérések minősége iránti elvárás növekedése az automatizálás általános előretörésével összhangban napjainkra elérte az egyetemi hallgatók önálló feladatainak kiadását és ellenőrzését is.
+Ez az Irányítástechnikai és Informatikai Tanszéken, a bevált, de a kor növekvő igényeinek már nem mindenben megfelelő Cporta automatikus feladatkiadó és -értékelő rendszer szolgáltatásainak kibővítését igényelte.
+Ezen elvárásokra válaszként több záródolgozat született.
+Az én feladatom, ezekhez csatlakozva a Cporta utódjaként megjelenő Jporta feladatkiértékelő képességeinek gazdagítása volt.
 
-\section*{További fejlesztések}\addcontentsline{toc}{section}{További fejlesztések}
-% TODO
+A Jporta feladatkiértékelő funkciójának fejlesztése igen komplikált feladat, de véleményem szerint sikerült eredményeket elérnem.
+A dolgozat \ref{chapter:jporta}. fejezetében bemutattam a Cporta tapasztalataira építő Jporta célját, használatát és történelmi előzményeit.
+A \ref{chapter:exercise}. fejezetben leírtam a Jporta automatizált feladatkiértékelő moduljának továbbfejlesztését.
+Ebben a követelmények felméréséből kiindulva kidolgoztam a feladatkiértékelő modul működéséhez szükséges adatszerkezeteket és szolgáltatási funkciókat.
+Ezek a feladatok kezelésének négy periódusa köré csoportosultak.
+Az első funkció a feladatok leírása, az oktatók általi, Jporta segítségével történő elkészítése.
+A második az adatbázisban tárolt feladatok oktatók általi kiadása, a harmadik pedig a megoldások hallgatók általi beadása.
+A negyedik a legizgalmasabb feladat, a megoldások ellenőrzése és kiértékelése.
+
+A feladatleíró modulhoz kidolgoztam a modellosztályokat, melyek kapcsolatrendszerét egy UML osztálydiagramon keresztül ismertettem.
+
+A feladatok készítését végző modulnál a feladatokra vonatkozó minél kisebb megszorítások alkalmazását, azaz a leírható feladatok sokszínűségét helyeztem előtérbe.
+Az alkalmazott interfész, bár vizualizációban nem nyújtja a maximumot, de a feladatelemeket és azok összeköttetéseit kellő szinten megjelenítve nyújt felhasználóbarát megoldást.
+Ehhez a modulhoz szorosan kapcsolódik az elkészült feladatok kiadását megvalósító funkció.
+
+A hallgatók által használt feladatbeadás funkció alapvetően fájlok feltöltésének kezelését jelentette ismétlési és ellenőrző megtekintési szolgáltatások beépítésével.
+
+A negyedik, megoldások ellenőrzése és értékelése funkció igényelte a legtöbb munkát és különféle szoftvertechnológiák (Celery, RabbitMQ, Redis) alkalmazását.
+A Celery fejlett üzenetküldési képességeit használtam ki a beadott feladatok várakozási sorának kezelésére, melynél az üzenetszétosztást a RabbitMQ AMQP alapú bróker végzi.
+A Redist, mely a kiértékeléskor kapott produktumok tárolásában működik közre, kiváló gyorsítótár tulajdonsága, és átfogó utasításkészlete miatt választottam.
+Ehhez az összetett feladatkiértékelő rendszerhez több, a feladatok összeállításánál félkész megoldásként szolgáló blokkot készítettem el és ismertettem.
+Ezek egyike a teljesen új lehetőséget nyújtó LecturerApproval blokk, mely az automatikus értékelést opcionálisan kiegészítő oktatói kézi értékelést is lehetővé teszi.
+
+A \ref{chapter:features}. fejezetben további hasznos funkciókra tettem javaslatot, ezek a csapatrendszer és a verziókövető rendszerrel való integrálás.
+
+A csapatrendszer integrálja a Jportába a tanszéken lévő Hercules nevű rendszer csapatkészítő és menedzsment funkcióját, ugyanakkor az eddig Herculest használó tárgyak számára nyújtja a Jporta széleskörű szolgáltatásait.
+A megvalósításhoz megadtam a Jporta csapatmunka kezeléssel integrált modelljét, és a funkció kidolgozásához szükséges alapvető meggondolásokat.
+
+A Jporta verziókövetéssel való integrálásának előnye abban áll, hogy hallgatók feladatmegoldás közben gyakorolhatják a verziókövető rendszerek használatát, megismerkedhetnek működésükkel és előnyeikkel.
+Javaslatom részeként kiválasztottam egy kurrens verziókezelő szoftvert, a Gitet, és fő vonalakban bemutattam, hogyan képezelhető el feladatok beadása ezzel a rendszerrel.
+
+\section*{További fejlesztési lehetőségek}\addcontentsline{toc}{section}{További fejlesztési lehetőségek}
+A Jporta fejlesztése közel sem ért véget, a rendszerben még rengeteg potenciál rejtőzik.
+
+A feladatok összeállításához felhasznáható blokkok száma és funkcionalitása még korlátozott.
+Szükség lenne további blokkok tervezésére és készítésére, hogy a rendszer több programozási nyelvet, több tesztelési opciót is támogathasson.
+
+A feladatok készítésére szolgáló felület ugyan kiválóan használható, de az általam is említett, vizuális, csomópont alapú szerkesztővel még hatékonyabbá és intuitívabbá válna ez a munkafolyamat.
+
+A röviden megemlített végrehajtó modulok fejlesztése is gyerekcipőben jár még.
+A fordítók, szkriptek, tesztek és egyéb programok biztonságos és hatékony futtatásának módszere még kidolgozásra vár.
+
+A Jporta rengeteg izgalmas és kihívásokkal teli problémát tartogat még a következő generáció számára is.
