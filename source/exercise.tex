@@ -7,12 +7,12 @@ A portálnak ebben az újabb változatában fontos cél, hogy ez az alrendszer f
 Ezt a flexibilitást egy általánosabb, de mégis egységes felépítés alkalmazásával igyekeztem elérni.
 Az általam megtervezett rendszer a programnyelvek használatához kapcsolódó eszközök (pl. fordítók, interpreterek, tesztelési környezetek) alacsonyszintű működését egy közös, magasabb szintű absztrakció mögé rejti, melynek hatására a rendszer bővíthetősége megnő, és akár nem programozási jellegű feladatok készítésére is alkalmassá válik.
 
-Ebben a fejezetben végigvezetem az olvasót a modul megtervezésének folyamatán, a követelmények összegyűjtésétől a megtervezett rendszer működésének és használatának leírásán át, egészen az implementációhoz szükséges technológiák bemutatásáig.
+Ebben a fejezetben bemutatom a modul megtervezésének folyamatát, a követelmények összegyűjtésétől a megtervezett rendszer működésének és használatának leírásán át, egészen az implementációhoz szükséges technológiák bemutatásáig.
 
 \section{Követelmények}\label{section:requirements}
 A tervezés első lépése a tervezendő modullal szemben támasztott követelmények felmérése, amit a már meglévő munka elemzésével kezdtem.
-A modul követelményeinek túlnyomú részét \cite{Ory13} már azonosította, miközben a portál egészére nézve végezte el ezt a feladatot.
-A \cite{Kalman14} szakdolgozat tovább pontosította a követelményeket, miközben a portál más aspektusainak fejlesztésén dolgozott.
+A modul követelményeinek túlnyomó részét egy korábbi szakdolgozat \cite{Ory13} már azonosította, miközben a portál egészére nézve végezte el ezt a feladatot.
+Egy másik szakdolgozat \cite{Kalman14} tovább pontosította a követelményeket, miközben a portál más aspektusainak fejlesztésén dolgozott.
 Az általuk feltárt követelmények a következők:
 \begin{enumerate}
     \item A hallgató listázhatja és megtekintheti a számára kiosztott feladatokat.
@@ -38,7 +38,7 @@ Ezek alapján én az alábbi kiegészítéseket teszem a követelmények már me
     \item \label{req:traceability} A kiértékelés folyamata legyen nyomonkövethető.
 \end{enumerate}
 
-A követelmények nagy része nem igényel magyarázatot, ám van néhány, amelyekről szeretnék még pár szót szólni.
+A követelmények nagy része magától értetődő, ám van néhány, ami igényel némi magyarázatot.
 
 Az \ref{req:specification}. követelmény a feladatkiírás szövegének dinamikus generálhatóságát írja elő.
 Ez azt jelenti, hogy a feladatkiírás hallgatónként eltérő lehet, amely eltérés a hallgató személyétől, pontosabban a személyéhez kapcsolódó, rendelkezésre álló információktól függ.
