@@ -1,8 +1,8 @@
 rsync -auv source/ build/
-pushd build
+cd build
 lualatex diploma
 bibtex diploma
 lualatex diploma
 lualatex diploma
-popd
+cd ..
 cp -uf build/diploma.pdf .
